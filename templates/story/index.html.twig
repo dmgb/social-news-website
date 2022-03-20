@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if extraData is not empty %}
+        {% include 'include/leader.html.twig' %}
+    {% endif %}
+    {% for story in stories %}
+        <story-list-item :story="{{ story|json_encode }}" :app-user="{{ app.user|json_encode }}"></story-list-item>
+    {% endfor %}
+    {% if pager.haveToPaginate %}
+        {% include 'include/pager.html.twig' %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="inner-container text-center">
+        <div class="form-wrapper">
+            {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_row(form.currentPassword) }}
+                </div>
+                <div>
+                    {{ form_row(form.plainPassword) }}
+                </div>
+                <button class="w-100 btn btn-lg btn-dark mb-3" type="submit">
+                    Change password
+                </button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

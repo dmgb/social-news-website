@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.21.6-alpine
+    ports:
+      - '80:80'
+    volumes:
+      - .:/var/www
+      - ./docker/conf.d:/etc/nginx/conf.d
+    networks:
+      main:
+        ipv4_address: 172.20.0.2
+
+  php:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    expose:
+      - 9000
+    volumes:
+      - .:/var/www
+    networks:
+      main:
+        ipv4_address: 172.20.0.3
+
+  mariadb:
+    image: mariadb:10.7.3-focal
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: snw
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+    networks:
+      main:
+        ipv4_address: 172.20.0.4
+
+networks:
+  main:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

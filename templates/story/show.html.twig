@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <story-view :story="{{ story|json_encode }}"
+                :comments="{{ comments|json_encode }}"
+                :app-user="{{ app.user|json_encode }}">
+    </story-view>
+{% endblock %}

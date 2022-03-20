@@ -1,0 +1,77 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path('index') }}">
+            <i class="bi bi-house-fill" style="font-size: 1.75rem;"></i>
+        </a>
+        <div style="margin-bottom: 2.25rem;">
+            <div class="navbar-center">
+                {{ render(controller('App\\Controller\\StoryController::search')) }}
+            </div>
+        </div>
+        <div class="hamburger navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-expanded="false">
+            <span class="line"></span>
+            <span class="line"></span>
+            <span class="line"></span>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('story_pending') }}">dashboard</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('story_create') }}">submit</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('comments') }}">comments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">about</a>
+                </li>
+            </ul>
+            <div class="text-end">
+                {% if app.user %}
+                    <div class="dropdown">
+                        <a class="dropdown-toggle"
+                           href="#"
+                           role="button"
+                           id="dropdownMenuLink"
+                           data-bs-toggle="dropdown"
+                           data-bs-display="static"
+                           aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end"
+                            aria-labelledby="dropdownMenuLink">
+                            <li class="ms-3"><b>{{ app.user.userIdentifier }}</b></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('change-password') }}">
+                                    Settings
+                                    <i class="bi bi-gear position-absolute end-0 me-3"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="btn btn-dark ms-3 me-3" href="{{ path('logout') }}" role="button"
+                                   style="width: 10rem;">
+                                    Sign out
+                                    <i class="bi bi-box-arrow-right ms-1"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class=" btn btn-outline-dark" href="{{ path('login') }}" role="button">
+                        Log in
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

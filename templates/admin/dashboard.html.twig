@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set currentRoute = app.request.attributes.get('_route') %}
+    <div class="ps-2 pt-2 pe-2">
+        <div class="row pb-2">
+            <div class="col-6 col-sm-6">
+                <nav class="nav nav-pills">
+                    <a class="nav-link {{ currentRoute == 'story_pending' ? ' active' : '' }}" aria-current="page" href="{{ path('story_pending') }}">
+                        Pending stories ({{ extraData.pendingCount }})
+                    </a>
+                    <a class="nav-link {{ currentRoute == 'story_deleted' ? ' active' : '' }}" href="{{ path('story_deleted') }}">
+                        Deleted stories ({{ extraData.deletedCount }})
+                    </a>
+                </nav>
+            </div>
+            <div class="col-6 col-sm-6">
+                <div class="float-end">
+                    <invite-user-button url="{{ actions.user.invite }}"></invite-user-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for story in stories %}
+        <dashboard-story-list-item :story="{{ story|json_encode }}" :app-user="{{ app.user|json_encode }}"></dashboard-story-list-item>
+    {% endfor %}
+    {% if pager.haveToPaginate %}
+        {% include 'include/pager.html.twig' %}
+    {% endif %}
+{% endblock %}

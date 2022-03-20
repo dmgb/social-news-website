@@ -1,0 +1,33 @@
+security:
+    enable_authenticator_manager: true
+    password_hashers:
+        App\Entity\User: 'auto'
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|js|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            user_checker: App\Security\UserChecker
+            remember_me:
+                secret: '%kernel.secret%'
+                signature_properties: ['password', 'forceReloginAt']
+                lifetime: 604800
+                path: /
+            logout:
+                path: logout
+                target: index
+            switch_user: true
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/change-password, roles: ROLE_USER }
+        - { path: ^/submit, roles: ROLE_USER }
+        - { path: ^/s/vote/create, roles: ROLE_USER }
+        - { path: ^/c/vote/create, roles: ROLE_USER }

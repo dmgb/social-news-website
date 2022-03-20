@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if extraData is not empty %}
+        {% include 'include/leader.html.twig' %}
+    {% endif %}
+    {% for comment in comments %}
+        <comment-list-item :comment="{{ comment|json_encode }}" :app-user="{{ app.user|json_encode }}" :nested-view="false">
+        </comment-list-item>
+    {% endfor %}
+    {% if pager.haveToPaginate %}
+        {% include 'include/pager.html.twig' %}
+    {% endif %}
+{% endblock %}

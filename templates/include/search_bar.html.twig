@@ -1,0 +1,8 @@
+{{ form_start(form, { 'attr': { 'novalidate': 'novalidate' }}) }}
+    <div class="input-group">
+        {{ form_widget(form.q) }}
+        <button class="btn btn-sm btn-light" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+{{ form_end(form) }}

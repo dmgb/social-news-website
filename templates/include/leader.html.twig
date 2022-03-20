@@ -1,0 +1,17 @@
+{% set route = app.request.attributes.get('_route') %}
+<div class="d-inline-block px-2 pt-2 fst-italic">
+    {% if route == 'story_search' and extraData.q %}
+        {{ '%d results for "%s"'|format(stories|length, extraData.q) }}
+    {% elseif route == 'story_get_by_tag' %}
+        Stories tagged as
+        <a href="{{ path('story_get_by_tag', { name: extraData.tagName}) }}">
+            <span class="badge rounded-pill bg-dark fst-normal">
+                {{ extraData.tagName }}
+            </span>
+        </a>
+    {% elseif route == 'story_get_by_domain' %}
+        {{ '%d stories from %d submitters'|format(stories|length, extraData.uniqueSubmittersCount) }}
+    {% elseif route in ['story_get_by_user', 'comment_get_by_user'] %}
+        {{ (route == 'story_get_by_user' ? 'Stories' : 'Comments') ~ ' by ' ~ extraData.username }}
+    {% endif %}
+</div>
