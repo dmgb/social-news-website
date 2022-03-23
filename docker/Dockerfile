@@ -11,8 +11,8 @@ RUN apk update  --no-cache && \
 	docker-php-ext-install pdo_mysql && \
 	pecl install xdebug && \
 	cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini && \
-	echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20200930/xdebug.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"` && \
+    LOADED_CONFIGURATION_FILE=`php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"` && \
+	echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20200930/xdebug.so" >> $LOADED_CONFIGURATION_FILE && \
+    echo "xdebug.mode=debug" >> $LOADED_CONFIGURATION_FILE && \
+    echo "xdebug.client_host = host.docker.internal" >> $LOADED_CONFIGURATION_FILE && \
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
-
-#xdebug.mode=debug
-#xdebug.client_host = host.docker.internal
