@@ -1,4 +1,5 @@
 .DS_Store
+./local-php-security-checker
 /.idea
 /.env.local
 /.env.local.php
