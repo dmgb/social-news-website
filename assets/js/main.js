@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../css/main.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { createApp } from 'vue/dist/vue.esm-bundler';
 import CommentListItem from './components/comment/CommentListItem';
 import StoryListItem from './components/story/StoryListItem';
@@ -12,6 +11,7 @@ import InviteUserButton from "./components/user/button/InviteUserButton";
 import DeleteStoryButton from "./components/story/button/DeleteStoryButton";
 import DashboardStoryListItem from "./components/story/DashboardStoryListItem";
 
+const bootstrap = require('bootstrap/dist/js/bootstrap.bundle.min.js');
 const app = createApp({});
 app.component('comment-list-item', CommentListItem);
 app.component('story-list-item', StoryListItem);
