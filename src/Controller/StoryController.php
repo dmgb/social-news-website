@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -87,9 +88,12 @@ class StoryController extends AbstractController
      * @throws ExceptionInterface
      */
     #[Route('/s/{shortId}/{slug}', name: 'story_show', methods: ['GET'])]
-    #[Security("is_granted('show', story)")]
     public function show(Story $story): Response
     {
+        if (!$story->isApproved() || $story->isDeleted()) {
+            throw new NotFoundHttpException();
+        }
+
         $comments = $story->getComments()->filter(fn($comment) => null === $comment->getParent())->getValues();
 
         return $this->render('story/show.html.twig', [

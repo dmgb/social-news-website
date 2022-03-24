@@ -40,14 +40,14 @@ class UserController extends AbstractController
     public function show(User $user): Response
     {
         $appUser = $this->getUser();
-        if ($user->isAdmin() && !$appUser->isAdmin()) {
+        if ($user->isAdmin() && !$appUser?->isAdmin()) {
             throw new NotFoundHttpException();
         }
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
             'mostCommonStoryTag' => $this->repository->findMostCommonStoryTag($user),
-            'actions' => $appUser->isAdmin() ? $this->getAdminActions($user) : null,
+            'actions' => $appUser?->isAdmin() ? $this->getAdminActions($user) : null,
         ]);
     }
 
