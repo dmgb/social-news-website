@@ -3,8 +3,13 @@
 {% block body %}
     <div class="ps-2 pt-2 pe-2">
         <div class="row">
-            <div class="col-lg-2 col-sm-6 col-6">
-                <h2>{{ user.userIdentifier }}</h2>
+            <div class="col-lg-2 col-sm-6 col-6 d-flex">
+                <div class="d-inline-block me-2">
+                    <img class="avatar pe-0 mb-2" src="{{ asset('build' ~ user.avatarPath) }}"  alt="" />
+                </div>
+                <div class="d-inline-block">
+                    <h2>{{ user.userIdentifier }}</h2>
+                </div>
             </div>
             {% if is_granted('ban', user) and not user.isAdmin %}
                 {% set action = user.banned ? 'unban' : 'ban' %}

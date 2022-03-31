@@ -246,3 +246,13 @@ kbd {
 .text-decoration-none {
     color: #212529 !important;
 }
+
+.avatar {
+    height: 3rem;
+    width: auto;
+}
+
+.avatar-sm {
+    height: 1rem;
+    border-radius: 50%;
+}

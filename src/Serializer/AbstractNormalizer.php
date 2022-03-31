@@ -29,6 +29,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, SerializerInte
         return [
             'username' => $username,
             'url' => $url,
+            'avatarPath' => '/build'.$user->getAvatarPath(),
         ];
     }
 

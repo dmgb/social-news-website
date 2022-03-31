@@ -56,6 +56,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private string $plainPassword;
 
+    #[Column(type: "string")]
+    private string $avatarPath;
+
     #[Column(type: "json")]
     private array $roles = [];
 
@@ -145,6 +148,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(string $plainPassword): void
     {
         $this->plainPassword = $plainPassword;
+    }
+
+    public function getAvatarPath(): string
+    {
+        return $this->avatarPath;
+    }
+
+    public function setAvatarPath(string $avatarPath): void
+    {
+        $this->avatarPath = $avatarPath;
     }
 
     /**

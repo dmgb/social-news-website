@@ -17,6 +17,9 @@
         </a>
       </div>
       <div>
+        <a :href="story.user.url">
+          <img class="avatar-sm" :src="story.user.avatarPath"  alt=""/>
+        </a>
         <small>
           submitted by
           <a :href="story.user.url" class="text-decoration-none hoverable">

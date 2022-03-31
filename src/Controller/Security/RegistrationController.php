@@ -7,6 +7,7 @@ use App\Form\RegistrationType;
 use App\Repository\InvitationRepository;
 use App\Repository\UserRepository;
 use App\Security\InvalidInvitationTokenException;
+use App\Service\IdenticonGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,8 +23,15 @@ class RegistrationController extends AbstractController
         private UserRepository $userRepository,
     ){}
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/register', name: 'register', methods: ['GET', 'POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher): RedirectResponse|Response
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        IdenticonGenerator $identiconGenerator,
+    ): RedirectResponse|Response
     {
         $token = $request->get('token');
         if (null === $token) {
@@ -51,6 +59,7 @@ class RegistrationController extends AbstractController
             $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
             $user->setPassword($hashedPassword);
             $user->setRoles(['ROLE_USER']);
+            $user->setAvatarPath($identiconGenerator->generate($user->getUserIdentifier()));
             $this->userRepository->save($user);
             $invitation->setIsUsed(true);
             $this->invitationRepository->save($invitation);
