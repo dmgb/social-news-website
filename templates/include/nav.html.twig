@@ -44,7 +44,14 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end"
                             aria-labelledby="dropdownMenuLink">
-                            <li class="ms-3"><b>{{ app.user.userIdentifier }}</b></li>
+                            <li class="ms-3 d-flex">
+                                <div class="d-inline-block me-2">
+                                    <img class="avatar-md" src="{{ asset('build' ~ app.user.avatarPath) }}"  alt="" />
+                                </div>
+                                <div class="d-inline-block">
+                                    <b>{{ app.user.userIdentifier }}</b>
+                                </div>
+                            </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>

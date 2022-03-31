@@ -4,6 +4,9 @@
     </vote-buttons>
     <div class="flex-column px-1" :id="'c_' + comment.shortId">
       <div>
+        <a class="me-1" :href="comment.user.url">
+          <img class="avatar-sm" :src="comment.user.avatarPath"  alt=""/>
+        </a>
         <small>
           <a :href="comment.user.url" class="text-decoration-none hoverable">
             {{ comment.user.username }}
