@@ -1,5 +1,5 @@
 .DS_Store
-./assets/images/
+/assets/images/
 /local-php-security-checker
 /.idea
 /.env.local

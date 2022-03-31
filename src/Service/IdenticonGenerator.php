@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service;
 
@@ -24,6 +24,10 @@ class IdenticonGenerator
         $dataUri = str_replace('data:image/png;base64,', '', $identicon->getImageDataUri());
         $data = base64_decode($dataUri);
         $file = $this->avatarsDirectory.'/'.$username.'.png';
+
+        if (!file_exists($this->avatarsDirectory)) {
+            mkdir($this->avatarsDirectory, 0755, true);
+        }
 
         if (false === file_put_contents($file, $data)) {
             throw new Exception('Error writing file.');
