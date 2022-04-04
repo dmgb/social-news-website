@@ -261,3 +261,13 @@ kbd {
     height: 1rem;
     border-radius: 50%;
 }
+
+.attribution {
+    font-size: .875em;
+    color: #fff;
+    text-decoration: none;
+}
+
+.attribution:hover {
+    color: #fff;
+}
