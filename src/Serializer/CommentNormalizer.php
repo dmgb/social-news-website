@@ -52,14 +52,21 @@ class CommentNormalizer extends AbstractNormalizer
      */
     private function normalizeChildren(Comment $comment): array
     {
-        return null === $comment->getParent() ?
-            [
-                'children' => array_map(fn($child) => $this->normalize($child), $comment->getChildren()->toArray()),
-                'childrenCount' => count($comment->getChildren()),
-            ]
-            :
-            [
-                'childrenCount' => count($comment->getParent()->getChildren()),
+        if (null === $comment->getParent()) {
+            $fn = fn($child) => $this->normalize($child);
+            $children = $comment->getChildren()->toArray();
+
+            return [
+                'children' => array_map($fn, $children),
+                'childrenCount' => count($children),
             ];
+        }
+
+        $children = $comment->getParent()->getChildren();
+
+        return [
+            'children' => $children,
+            'childrenCount' => count($children),
+        ];
     }
 }

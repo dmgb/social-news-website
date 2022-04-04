@@ -95,10 +95,11 @@ class StoryController extends AbstractController
         }
 
         $comments = $story->getComments()->filter(fn($comment) => null === $comment->getParent())->getValues();
+        $fn = fn($comment) => $this->commentNormalizer->normalize($comment, context: ['include_children' => true]);
 
         return $this->render('story/show.html.twig', [
             'story' => $this->storyNormalizer->normalize($story),
-            'comments' => array_map(fn($comment) => $this->commentNormalizer->normalize($comment, context: ['include_children' => true]), $comments),
+            'comments' => array_map($fn, $comments),
         ]);
     }
 
@@ -213,7 +214,9 @@ class StoryController extends AbstractController
     #[Route('/tag/{name}', name: 'story_get_by_tag', methods: ['GET'])]
     public function getByTag(Request $request, Tag $tag): Response
     {
-        return $this->list($request, $this->storyRepository->findByTag($tag), ['tagName' => $tag->getName()]);
+        $stories = $this->storyRepository->findByTag($tag);
+
+        return $this->list($request, $stories, ['tagName' => $tag->getName()]);
     }
 
     /**
@@ -223,7 +226,8 @@ class StoryController extends AbstractController
     public function getByDomain(Request $request, string $name): Response
     {
         $stories = $this->storyRepository->findByDomain($name);
-        $uniqueSubmittersCount = count(array_unique(array_map(fn($story) => $story->getUser(), $stories)));
+        $users = array_map(fn($story) => $story->getUser(), $stories);
+        $uniqueSubmittersCount = count(array_unique($users));
 
         return $this->list($request, $stories, ['uniqueSubmittersCount' => $uniqueSubmittersCount]);
     }
@@ -234,7 +238,9 @@ class StoryController extends AbstractController
     #[Route('/stories/{username}', name: 'story_get_by_user', methods: ['GET'])]
     public function getByUser(Request $request, User $user): Response
     {
-        return $this->list($request, $this->storyRepository->findByUser($user), ['username' => $user->getUserIdentifier()]);
+        $stories = $this->storyRepository->findByUser($user);
+
+        return $this->list($request, $stories, ['username' => $user->getUserIdentifier()]);
     }
 
     /**
@@ -246,8 +252,9 @@ class StoryController extends AbstractController
     {
         $stories = $storyRepository->findBy(['isApproved' => false, 'isDeleted' => false], ['createdAt' => 'DESC']);
         $deletedCount = $this->storyRepository->count(['isDeleted' => true]);
+        $extraData = ['pendingCount' => count($stories), 'deletedCount' => $deletedCount];
 
-        return $this->list($request, $stories, ['pendingCount' => count($stories), 'deletedCount' => $deletedCount], true);
+        return $this->list($request, $stories, $extraData, true);
     }
 
     /**
@@ -259,8 +266,9 @@ class StoryController extends AbstractController
     {
         $stories = $storyRepository->findBy(['isDeleted' => true], ['createdAt' => 'DESC']);
         $pendingCount = $this->storyRepository->count(['isApproved' => false]);
+        $extraData = ['deletedCount' => count($stories), 'pendingCount' => $pendingCount];
 
-        return $this->list($request, $stories, ['deletedCount' => count($stories), 'pendingCount' => $pendingCount], true);
+        return $this->list($request, $stories, $extraData, true);
     }
 
     /**
@@ -268,11 +276,13 @@ class StoryController extends AbstractController
      */
     private function list(Request $request, array $stories, array $extraData = [], bool $isAdminView = false): Response
     {
-        $paginator = $this->createPaginator($stories, $request->query->getInt('page', 1), self::MAX_PER_PAGE);
+        $currentPage = $request->query->getInt('page', 1);
+        $paginator = $this->createPaginator($stories, $currentPage, self::MAX_PER_PAGE);
         $template = $isAdminView ? 'admin/dashboard.html.twig' : 'story/index.html.twig';
+        $fn = fn($story) => $this->storyNormalizer->normalize($story);
 
         return $this->render($template, [
-            'stories' => array_map(fn($story) => $this->storyNormalizer->normalize($story), $paginator->getCurrentPageResults()),
+            'stories' => array_map($fn, $paginator->getCurrentPageResults()),
             'pager' => $paginator,
             'extraData' => $extraData,
             'actions' => $isAdminView ? $this->getAdminActions() : null,

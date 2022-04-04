@@ -82,7 +82,8 @@ class StoryNormalizer extends AbstractNormalizer
     private function normalizeTags(array $tags): array
     {
         $this->setSerializer(new TagNormalizer($this->router, $this->security));
+        $fn = fn($tag) => $this->serializer->normalize($tag, null, []);
 
-        return array_map(fn($tag) => $this->serializer->normalize($tag, null, []), $tags);
+        return array_map($fn, $tags);
     }
 }

@@ -89,10 +89,12 @@ class CommentController extends AbstractController
      */
     private function list(Request $request, array $comments, ?array $extraData = null): Response
     {
-        $paginator = $this->createPaginator($comments, $request->query->getInt('page', 1), self::MAX_PER_PAGE);
+        $currentPage = $request->query->getInt('page', 1);
+        $paginator = $this->createPaginator($comments, $currentPage, self::MAX_PER_PAGE);
+        $fn = fn($comment) => $this->normalizer->normalize($comment);
 
         return $this->render('comment/index.html.twig', [
-            'comments' => array_map(fn($comment) => $this->normalizer->normalize($comment), $paginator->getCurrentPageResults()),
+            'comments' => array_map($fn, $paginator->getCurrentPageResults()),
             'pager' => $paginator,
             'extraData' => $extraData,
         ]);
