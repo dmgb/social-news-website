@@ -46,7 +46,7 @@ export default defineComponent({
       'score': score,
       'hasVoteOfCurrentUser': hasVoteOfCurrentUser,
       'parentId': id,
-      'route': props.comment.routes.vote,
+      'url': props.comment.urls.vote,
     }
 
     return {

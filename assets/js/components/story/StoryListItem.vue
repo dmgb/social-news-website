@@ -7,7 +7,7 @@
         <a :href="story.url" class="me-1 text-decoration-none" style="font-weight: bolder;">
           {{ story.title }}
         </a>
-        <a v-for="tag in story.tags" class="me-1 text-decoration-none" :href="tag.route">
+        <a v-for="tag in story.tags" class="me-1 text-decoration-none" :href="tag.url">
           <span class="badge rounded-pill bg-dark">{{ tag.name }}</span>
         </a>
         <a :href="story.domain.url" class="text-decoration-none hoverable">
@@ -26,7 +26,7 @@
             {{ story.user.username }}
           </a>
           {{ story.createdAt }} |
-          <a v-if=!story.adminView :href="story.routes.show" class="text-decoration-none hoverable">
+          <a v-if=!story.adminView :href="story.urls.show" class="text-decoration-none hoverable">
             <span v-if="story.commentsCount === 0">
               discuss
             </span>
@@ -34,12 +34,12 @@
               {{ story.commentsCount }} comments
             </span>
           </a>
-          <span v-if="story.routes.edit"> |
-              <a :href="story.routes.edit" class="me-1 text-decoration-none">
+          <span v-if="story.urls.edit"> |
+              <a :href="story.urls.edit" class="me-1 text-decoration-none">
                 <i class="bi bi-pencil-square"></i>
               </a>
-              <a v-if="story.routes.delete" class="me-1 text-decoration-none">
-                <delete-story-button :url="story.routes.delete.url" action="delete" :story-id="story.id"></delete-story-button>
+              <a v-if="story.urls.delete" class="me-1 text-decoration-none">
+                <delete-story-button :url="story.urls.delete.url" action="delete" :story-id="story.id"></delete-story-button>
               </a>
           </span>
         </small>
@@ -71,7 +71,7 @@ export default defineComponent({
       'score': score,
       'hasVoteOfCurrentUser': hasVoteOfCurrentUser,
       'parentId': props.story.id,
-      'route': props.story.routes.vote,
+      'url': props.story.urls.vote,
     }
 
     return {

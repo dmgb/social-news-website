@@ -4,7 +4,6 @@ namespace App\Serializer;
 
 use App\Entity\Story;
 use App\Helper\DateTimeFormatter;
-use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -18,9 +17,10 @@ class StoryNormalizer extends AbstractNormalizer
         parent::__construct($router, $security);
     }
 
-    public function normalize($story, string $format = null, array $context = []): array
+    public function normalize($object, string $format = null, array $context = []): array
     {
-        $routeParameters = ['shortId' => $story->getShortId(), 'slug' => $story->getSlug()];
+        /** @var Story $story */
+        $story = $object;
 
         return [
             'id' => $story->getId(),
@@ -33,27 +33,35 @@ class StoryNormalizer extends AbstractNormalizer
             'tags' => $this->normalizeTags($story->getTags()->toArray()),
             'commentsCount' => count($story->getComments()),
             'hasVoteOfCurrentUser' => $story->hasVoteOfUser($this->security->getUser()),
-            'routes' => [
-                'show' => $this->router->generate('story_show', $routeParameters),
-                'comment' => $this->router->generate('comment_create', ['story' => $story->getId()]),
-                'vote' => $this->router->generate('story_vote_create'),
-                'edit' => $this->security->isGranted('edit', $story) ?
-                    $this->router->generate('story_update', $routeParameters) :
-                    null,
-                'delete' => $this->security->isGranted('delete', $story) ?
-                    $this->getDeleteRoute($story, $routeParameters) :
-                    null,
-                'approve' => $this->security->isGranted('ROLE_ADMIN') && !$story->isDeleted() ?
-                    $this->router->generate('story_approve', $routeParameters) :
-                    null,
-                'disapprove' => $this->security->isGranted('ROLE_ADMIN') && !$story->getDissapprovedReason() && !$story->isDeleted() ?
-                    $this->router->generate('story_disapprove', $routeParameters) :
-                    null,
-            ],
+            'urls' => $this->getUrls($story),
         ];
     }
 
-    private function getDeleteRoute(Story $story, array $routeParameters): ?array
+    private function getUrls(Story $story): array
+    {
+        $parameters = ['shortId' => $story->getShortId(), 'slug' => $story->getSlug()];
+        $canApprove = $this->security->isGranted('ROLE_ADMIN') && !$story->isDeleted();
+        $canDissaprove = $this->security->isGranted('ROLE_ADMIN') && !$story->getDissapprovedReason() && !$story->isDeleted();
+        $show = $this->router->generate('story_show', $parameters);
+        $comment = $this->router->generate('comment_create', ['story' => $story->getId()]);
+        $vote = $this->router->generate('story_vote_create');
+        $edit = $this->security->isGranted('edit', $story) ? $this->router->generate('story_update', $parameters) : null;
+        $delete = $this->security->isGranted('delete', $story) ? $this->getDeleteUrl($story, $parameters) : null;
+        $approve = $canApprove ? $this->router->generate('story_approve', $parameters) : null;
+        $disapprove = $canDissaprove ? $this->router->generate('story_disapprove', $parameters) : null;
+
+        return array_filter([
+            'show' => $show,
+            'comment' => $comment,
+            'vote' => $vote,
+            'edit' => $edit,
+            'delete' => $delete,
+            'approve' => $approve,
+            'disapprove' => $disapprove,
+        ]);
+    }
+
+    private function getDeleteUrl(Story $story, array $routeParameters): ?array
     {
         if ($story->isDeleted()) {
             return [
@@ -71,11 +79,11 @@ class StoryNormalizer extends AbstractNormalizer
     private function normalizeDomain(string $url): array
     {
         $name = $this->normalizeUrl($url);
-        $localUrl = $this->router->generate('story_get_by_domain', ['name' => $name]);
+        $url = $this->router->generate('story_get_by_domain', ['name' => $name]);
 
         return [
             'name' => $name,
-            'url' => $localUrl,
+            'url' => $url,
         ];
     }
 

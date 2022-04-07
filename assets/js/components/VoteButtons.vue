@@ -9,7 +9,7 @@
       <i class="bi bi-caret-up-fill"></i>
     </div>
     <div v-else>
-      <a :href="data.route" @click.prevent="addVote(true)">
+      <a :href="data.url" @click.prevent="addVote(true)">
         <i class="bi bi-caret-up-fill"></i>
       </a>
     </div>
@@ -25,7 +25,7 @@
       <i class="bi bi-caret-down-fill"></i>
     </div>
     <div v-else>
-      <a :href="data.route" @click.prevent="addVote(false)">
+      <a :href="data.url" @click.prevent="addVote(false)">
         <i class="bi bi-caret-down-fill"></i>
       </a>
     </div>
@@ -46,7 +46,7 @@ export default defineComponent({
     const appUser = inject('appUser');
     const parentId = isRef(props.data.parentId) ? props.data.parentId.value : props.data.parentId;
     const addVote = async (upvote) => {
-        const { error, data } = await http.post(props.data.route, { id: parentId, upvote: upvote }, {
+        const { error, data } = await http.post(props.data.url, { id: parentId, upvote: upvote }, {
         });
 
         if (data) {

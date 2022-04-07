@@ -2,6 +2,7 @@
 
 namespace App\Serializer;
 
+use App\Entity\Tag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -15,14 +16,16 @@ class TagNormalizer extends AbstractNormalizer
         parent::__construct($router, $security);
     }
 
-    public function normalize($tag, string $format = null, array $context = []): array
+    public function normalize($object, string $format = null, array $context = []): array
     {
+        /** @var Tag $tag */
+        $tag = $object;
         $name = $tag->getName();
-        $route = $this->router->generate('story_get_by_tag', ['name' => $name]);
+        $url = $this->router->generate('story_get_by_tag', ['name' => $name]);
 
         return [
             'name' => $name,
-            'route' => $route,
+            'url' => $url,
         ];
     }
 }

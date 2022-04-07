@@ -80,6 +80,11 @@ class Comment implements Normalizable
         return $this->parent;
     }
 
+    public function isParent(): bool
+    {
+        return null === $this->parent;
+    }
+
     public function getUser(): UserInterface
     {
         return $this->user;

@@ -2,7 +2,7 @@
   <story-list-item :story="storyRef" :appUser="appUser">
   </story-list-item>
   <div class="mt-3 mb-n1 px-2">
-    <comment-form :action="story.routes.comment" @add-comment="addComment"></comment-form>
+    <comment-form :action="story.urls.comment" @add-comment="addComment"></comment-form>
   </div>
   <div class="pb-3">
     <template v-for="comment in commentsRef" :key="comment.id">

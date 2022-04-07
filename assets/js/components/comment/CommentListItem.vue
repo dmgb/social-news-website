@@ -48,7 +48,7 @@
         </div>
       </div>
       <div class="collapse mt-3" :id="'reply-form-' + comment.id">
-        <comment-form :action="comment.routes.reply" :submit-button-text="'Add reply'" @add-comment="addComment">
+        <comment-form :action="comment.urls.reply" :submit-button-text="'Add reply'" @add-comment="addComment">
         </comment-form>
       </div>
       <div class="collapse show" :id="'children-list-' + comment.id">
@@ -102,7 +102,7 @@ export default defineComponent({
       'score': score,
       'hasVoteOfCurrentUser': hasVoteOfCurrentUser,
       'parentId': id,
-      'route': props.comment.routes.vote,
+      'url': props.comment.urls.vote,
     }
 
     return {

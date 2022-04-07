@@ -18,9 +18,11 @@ class CommentNormalizer extends AbstractNormalizer
         parent::__construct($router, $security);
     }
 
-    public function normalize($comment, string $format = null, array $context = []): array
+    public function normalize($object, string $format = null, array $context = []): array
     {
-        $data = [
+        /** @var Comment $comment */
+        $comment = $object;
+        $return = [
             'id' => $comment->getId(),
             'shortId' => $comment->getShortId(),
             'story' => [
@@ -35,7 +37,7 @@ class CommentNormalizer extends AbstractNormalizer
             'score' => $comment->getScore(),
             'user' => $this->normalizeUser($comment->getUser()),
             'hasVoteOfCurrentUser' => $comment->hasVoteOfCurrentUser($this->security->getUser()),
-            'routes' => [
+            'urls' => [
                 'reply' => $this->router->generate('comment_create', [
                     'story' => $comment->getStory()->getId(),
                     'parent' => $comment->getId(),
@@ -44,7 +46,11 @@ class CommentNormalizer extends AbstractNormalizer
             ],
         ];
 
-        return isset($context['include_children']) ? array_merge($data, $this->normalizeChildren($comment)) : $data;
+        if (isset($context['include_children'])) {
+            return array_merge($return, $this->normalizeChildren($comment));
+        }
+
+        return $return;
     }
 
     /**
@@ -52,7 +58,7 @@ class CommentNormalizer extends AbstractNormalizer
      */
     private function normalizeChildren(Comment $comment): array
     {
-        if (null === $comment->getParent()) {
+        if ($comment->isParent()) {
             $fn = fn($child) => $this->normalize($child);
             $children = $comment->getChildren()->toArray();
 

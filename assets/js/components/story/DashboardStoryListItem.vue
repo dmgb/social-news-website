@@ -5,7 +5,7 @@
         <a :href="story.url" class="me-1 text-decoration-none" style="font-weight: bolder;">
           {{ story.title }}
         </a>
-        <a v-for="tag in story.tags" class="me-1 text-decoration-none" :href="tag.route">
+        <a v-for="tag in story.tags" class="me-1 text-decoration-none" :href="tag.url">
           <span class="badge rounded-pill bg-dark">{{ tag.name }}</span>
         </a>
         <a :href="story.domain.url" class="text-decoration-none hoverable">
@@ -15,6 +15,9 @@
         </a>
       </div>
       <div>
+        <a :href="story.user.url">
+          <img class="avatar-sm" :src="story.user.avatarPath"  alt=""/>
+        </a>
         <small>
           submitted by
           <a :href="story.user.url" class="text-decoration-none hoverable">
@@ -22,14 +25,14 @@
           </a>
           {{ story.createdAt }} |
           <span>
-            <approve-story-button v-if=story.routes.approve :url="story.routes.approve" :action="'approve'" :story-id="story.id">
+            <approve-story-button v-if=story.urls.approve :url="story.urls.approve" :action="'approve'" :story-id="story.id">
             </approve-story-button>
-            <approve-story-button v-if=story.routes.disapprove :url="story.routes.disapprove" :action="'disapprove'" :story-id="story.id">
+            <approve-story-button v-if=story.urls.disapprove :url="story.urls.disapprove" :action="'disapprove'" :story-id="story.id">
             </approve-story-button>
-            <a :href="story.routes.edit" class="me-1 text-decoration-none">
+            <a :href="story.urls.edit" class="me-1 text-decoration-none">
               <i class="bi bi-pencil-square"></i>
             </a>
-            <delete-story-button :url="story.routes.delete.url" :action="story.routes.delete.action" :story-id="story.id">
+            <delete-story-button :url="story.urls.delete.url" :action="story.urls.delete.action" :story-id="story.id">
             </delete-story-button>
           </span>
         </small>
