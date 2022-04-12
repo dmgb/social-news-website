@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Story;
 use App\Entity\Tag;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,13 +16,43 @@ class StoryRepository extends AbstractRepository
         parent::__construct($registry);
     }
 
+    public function findAll()
+    {
+        $qb = $this->createQueryBuilder('s');
+        $this->addApprovedClause($qb);
+
+        return $qb
+            ->orderBy('s.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByTagFilters(Collection $filters): array
+    {
+        if ($filters->isEmpty()) {
+            return $this->findAll();
+        }
+
+        $tags = $filters->map(fn($tagFilter) => $tagFilter->getTag());
+        $qb = $this->createQueryBuilder('s');
+        $qb->innerJoin('s.tags', 't')->andWhere(':tags NOT MEMBER OF s.tags');
+        $this->addApprovedClause($qb);
+
+        return $qb
+            ->setParameter('tags', $tags)
+            ->orderBy('s.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findBySearch(string $q): array
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.title LIKE :query')
-            ->andWhere('s.isApproved = 1')
-            ->andWhere('s.isDeleted = 0')
-            ->setParameter('query', '%' . $q . '%')
+        $qb = $this->createQueryBuilder('s');
+        $qb->andWhere('s.title LIKE :query');
+        $this->addApprovedClause($qb);
+
+        return $qb
+            ->setParameter('query', '%'.$q.'%')
             ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -28,11 +60,11 @@ class StoryRepository extends AbstractRepository
 
     public function findByTag(Tag $tag): array
     {
-        return $this->createQueryBuilder('s')
-            ->innerJoin('s.tags', 't')
-            ->andWhere('t = :tag')
-            ->andWhere('s.isApproved = 1')
-            ->andWhere('s.isDeleted = 0')
+        $qb = $this->createQueryBuilder('s');
+        $qb->innerJoin('s.tags', 't')->andWhere('t = :tag');
+        $this->addApprovedClause($qb);
+
+        return $qb
             ->setParameter('tag', $tag)
             ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
@@ -41,12 +73,13 @@ class StoryRepository extends AbstractRepository
 
     public function findByDomain(string $url): array
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.url LIKE :url')
-            ->andWhere('s.isApproved = 1')
-            ->andWhere('s.isDeleted = 0')
+        $qb = $this->createQueryBuilder('s');
+        $qb->andWhere('s.url LIKE :url');
+        $this->addApprovedClause($qb);
+
+        return $qb
             ->innerJoin('s.user', 'u')
-            ->setParameter('url', '%' . $url . '%')
+            ->setParameter('url', '%'.$url.'%')
             ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -54,14 +87,21 @@ class StoryRepository extends AbstractRepository
 
     public function findByUser(UserInterface $user): array
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.user = :user')
+        $qb = $this->createQueryBuilder('s');
+        $qb->andWhere('s.user = :user');
+
+        return $qb
             ->andWhere('s.isApproved = 1')
             ->andWhere('s.isDeleted = 0')
             ->setParameter('user', $user)
             ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
+    }
+
+    private function addApprovedClause(QueryBuilder $qb): void
+    {
+        $qb->andWhere('s.isApproved = 1')->andWhere('s.isDeleted = 0');
     }
 
     public function getEntityClass(): string

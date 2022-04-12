@@ -271,3 +271,13 @@ kbd {
 .attribution:hover {
     color: #fff;
 }
+
+.table {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.table th, .table tr, .table td {
+    border-left: none;
+    border-right: none;
+}

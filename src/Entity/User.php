@@ -93,6 +93,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(mappedBy: "user", targetEntity: "App\Entity\Vote\CommentVote")]
     private Collection $commentVotes;
 
+    #[OneToMany(mappedBy: 'user', targetEntity: TagFilter::class)]
+    private Collection $tagFilters;
+
     public function __construct()
     {
         $this->createdAt = new DateTime();
@@ -100,6 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->storyVotes = new ArrayCollection();
         $this->commentVotes = new ArrayCollection();
+        $this->tagFilters = new ArrayCollection();
     }
 
     public function getUserIdentifier(): string
@@ -233,7 +237,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getApprovedStoriesCount(): int
     {
-        return $this->stories->filter(fn($story) => $story->isApproved())->count();
+        $s = count($this->stories);
+        return $this->stories->filter(fn($story) => $story->isApproved() && !$story->isDeleted())->count();
     }
 
     public function getComments(): Collection
@@ -249,6 +254,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getCommentVotes(): Collection
     {
         return $this->commentVotes;
+    }
+
+    public function getTagFilters(): Collection
+    {
+        return $this->tagFilters;
     }
 
     public function canSubmitStories(): bool

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="inner-container text-center">
+        <div class="form-wrapper">
+            {{ form_start(form) }}
+            <table class="table table-bordered text-start border-dark">
+                <tbody>
+                    <tr class="font-monospace text-lowercase">
+                        <th class="me-0 pe-0">Hide</th>
+                        <th>Tag</th>
+                        <th class="float-end">Stories</th>
+                    </tr>
+                    {% for item in form.tags %}
+                        {% set index = item.vars.value %}
+                        {% set tag = form.tags.vars.choices[index].data %}
+                        {% set checked = item.vars.checked %}
+                        <tr>
+                            <td>
+                                <input class="form-check-input" type="checkbox" name="tag_filter[tags][]"
+                                       value="{{ tag.id }}" {{ checked ? 'checked' : '' }}>
+                            </td>
+                            <td>
+                                <a class="text-decoration-none" href="{{ path('story_get_by_tag', { 'name': tag.name }) }}">
+                                    <span class="badge rounded-pill bg-dark">{{ tag.name }}</span>
+                                </a>
+                            </td>
+                            <td class="float-end">
+                                {{ tag.stories|length }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% do form.tags.setRendered() %}
+            <button class="w-100 btn btn-lg btn-dark" type="submit">
+                Save filters
+            </button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

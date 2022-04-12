@@ -16,6 +16,7 @@ use App\Serializer\CommentNormalizer;
 use App\Serializer\StoryNormalizer;
 use App\Service\ShortIdGenerator;
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -47,9 +48,15 @@ class StoryController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $stories = $this->storyRepository->findBy(['isApproved' => true, 'isDeleted' => false], ['createdAt' => 'DESC']);
+        $user = $this->getUser();
+        $stories = $user ? $this->getByTagsFilters($user->getTagFilters()) : $this->storyRepository->findAll();
 
         return $this->list($request, $stories);
+    }
+
+    private function getByTagsFilters(Collection $filters): array
+    {
+        return $this->storyRepository->findByTagFilters($filters);
     }
 
     /**

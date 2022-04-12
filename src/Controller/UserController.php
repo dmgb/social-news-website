@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Controller\Trait\ControllerTrait;
 use App\Entity\Invitation;
 use App\Entity\User;
+use App\Form\TagFilterType;
 use App\Mailer\UserMailer;
 use App\Repository\InvitationRepository;
 use App\Repository\UserRepository;
 use App\Service\InvitationTokenGenerator;
+use App\Service\TagFilterService;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
@@ -21,6 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
@@ -117,5 +120,24 @@ class UserController extends AbstractController
         $this->addFlash('success', 'User is unbanned.');
 
         return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/u/{username}/filters', name: 'user_filter_tags', methods: ['GET', 'POST'])]
+    public function filterTags(Request $request, UserInterface $user, TagFilterService $service): Response
+    {
+        $currentFilters = $user->getTagFilters();
+        $currentTags = $service->getTagsFromFilters($currentFilters);
+        $form = $this->createForm(TagFilterType::class, ['currentTags' => clone $currentTags]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $service->handle($form->getData()['tags'], $currentFilters, $user);
+            $this->addFlash('success', 'Filters successfully saved.');
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('user/filter_tags.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

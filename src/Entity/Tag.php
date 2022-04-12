@@ -9,8 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToMany;
-use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
+use Doctrine\ORM\Mapping\OneToMany;
 use JsonSerializable;
 
 #[Entity(repositoryClass: TagRepository::class)]
@@ -21,12 +20,16 @@ class Tag implements JsonSerializable
     #[ManyToMany(targetEntity: "Story", mappedBy: "tags")]
     private Collection $stories;
 
+    #[OneToMany(mappedBy: 'tag', targetEntity: TagFilter::class)]
+    private Collection $tagFilters;
+
     public function __construct(
         #[Column(type: "string", unique: true)]
         private string $name,
     )
     {
         $this->stories = new ArrayCollection();
+        $this->tagFilters = new ArrayCollection();
     }
 
     public function getName(): string
@@ -36,7 +39,7 @@ class Tag implements JsonSerializable
 
     public function getStories(): Collection
     {
-        return $this->stories;
+        return $this->stories->filter(fn(Story $story) => $story->isApproved() && !$story->isDeleted());
     }
 
     public function jsonSerialize(): array
@@ -45,5 +48,10 @@ class Tag implements JsonSerializable
             'id' => $this->getId(),
             'name' => $this->getName(),
         ];
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

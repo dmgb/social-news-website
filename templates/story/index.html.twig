@@ -4,9 +4,23 @@
     {% if extraData is not empty %}
         {% include 'include/leader.html.twig' %}
     {% endif %}
-    {% for story in stories %}
-        <story-list-item :story="{{ story|json_encode }}" :app-user="{{ app.user|json_encode }}"></story-list-item>
-    {% endfor %}
+    <div class="row">
+        <div class="col-8">
+            {% for story in stories %}
+                <story-list-item :story="{{ story|json_encode }}" :app-user="{{ app.user|json_encode }}">
+                </story-list-item>
+            {% endfor %}
+        </div>
+        {% if app.user %}
+            <div class="col-4">
+                <div class="float-end pt-2 pe-2">
+                    <a class="text-decoration-none" href="{{ path('user_filter_tags', { 'username': app.user.userIdentifier }) }}">
+                        <img class="pe-1" src="{{ asset('build/images/filter.png') }}" alt="" style="height: 1rem; width: auto;" />Filter
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
     {% if pager.haveToPaginate %}
         {% include 'include/pager.html.twig' %}
     {% endif %}
