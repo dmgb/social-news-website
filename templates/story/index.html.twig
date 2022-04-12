@@ -11,7 +11,7 @@
                 </story-list-item>
             {% endfor %}
         </div>
-        {% if app.user %}
+        {% if app.request.attributes.get('_route') == 'index' and app.user %}
             <div class="col-4">
                 <div class="float-end pt-2 pe-2">
                     <a class="text-decoration-none" href="{{ path('user_filter_tags', { 'username': app.user.userIdentifier }) }}">

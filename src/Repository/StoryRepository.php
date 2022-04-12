@@ -89,10 +89,9 @@ class StoryRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->andWhere('s.user = :user');
+        $this->addApprovedClause($qb);
 
         return $qb
-            ->andWhere('s.isApproved = 1')
-            ->andWhere('s.isDeleted = 0')
             ->setParameter('user', $user)
             ->orderBy('s.createdAt', 'DESC')
             ->getQuery()

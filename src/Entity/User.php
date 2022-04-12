@@ -237,7 +237,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getApprovedStoriesCount(): int
     {
-        $s = count($this->stories);
         return $this->stories->filter(fn($story) => $story->isApproved() && !$story->isDeleted())->count();
     }
 

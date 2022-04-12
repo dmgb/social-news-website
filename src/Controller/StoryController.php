@@ -49,12 +49,12 @@ class StoryController extends AbstractController
     public function index(Request $request): Response
     {
         $user = $this->getUser();
-        $stories = $user ? $this->getByTagsFilters($user->getTagFilters()) : $this->storyRepository->findAll();
+        $stories = $user ? $this->getByTagFilters($user->getTagFilters()) : $this->storyRepository->findAll();
 
         return $this->list($request, $stories);
     }
 
-    private function getByTagsFilters(Collection $filters): array
+    private function getByTagFilters(Collection $filters): array
     {
         return $this->storyRepository->findByTagFilters($filters);
     }

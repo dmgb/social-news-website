@@ -20,7 +20,8 @@ class TagFilterService
         $newlySelectedTags = CollectionHelper::filterIfDoesNotContain($tags, $currentTags);
         $deselectedTags = CollectionHelper::filterIfDoesNotContain($currentTags, $tags);
         $newFilters = $newlySelectedTags->map(fn($tag) => new TagFilter($tag, $user));
-        $deselectedFilters = $this->getDeselected($currentFilters, $deselectedTags);
+        $deselectedFilters = $currentFilters->filter(fn($filter) => $deselectedTags->contains($filter->getTag()));
+
         $this->repository->save($newFilters);
         $this->repository->remove($deselectedFilters);
     }
@@ -28,10 +29,5 @@ class TagFilterService
     public function getTagsFromFilters(Collection $filters): Collection
     {
         return $filters->map(fn($filter) => $filter->getTag());
-    }
-
-    private function getDeselected(Collection $filters, Collection $tags): Collection
-    {
-        return $filters->filter(fn($filter) => $tags->contains($filter->getTag()));
     }
 }
