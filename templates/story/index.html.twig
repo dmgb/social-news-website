@@ -3,6 +3,7 @@
 {% block body %}
     {% if extraData is not empty %}
         {% include 'include/leader.html.twig' %}
+        {% include 'include/filters_link.html.twig' %}
     {% endif %}
     <div class="row">
         <div class="col-8">
@@ -13,11 +14,7 @@
         </div>
         {% if app.user and app.request.attributes.get('_route') == 'index' %}
             <div class="col-4">
-                <div class="float-end pt-2 pe-2">
-                    <a class="text-decoration-none" href="{{ path('user_filter_tags', { 'username': app.user.userIdentifier }) }}">
-                        <img class="pe-1" src="{{ asset('build/images/filter.png') }}" alt="" style="height: 1rem; width: auto;" />Filter
-                    </a>
-                </div>
+                {% include 'include/filters_link.html.twig' %}
             </div>
         {% endif %}
     </div>

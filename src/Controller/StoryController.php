@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Controller\Trait\ControllerTrait;
 use App\Entity\Story;
 use App\Entity\Tag;
-use App\Entity\User;
 use App\Entity\Vote\StoryVote;
 use App\Form\SearchFieldType;
 use App\Form\StoryType;
@@ -16,7 +15,6 @@ use App\Serializer\CommentNormalizer;
 use App\Serializer\StoryNormalizer;
 use App\Service\ShortIdGenerator;
 use DateTime;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -26,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -48,15 +47,9 @@ class StoryController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $user = $this->getUser();
-        $stories = $user ? $this->getByTagFilters($user->getTagFilters()) : $this->storyRepository->findAll();
+        $stories = $this->storyRepository->findAll($this->getUser());
 
         return $this->list($request, $stories);
-    }
-
-    private function getByTagFilters(Collection $filters): array
-    {
-        return $this->storyRepository->findByTagFilters($filters);
     }
 
     /**
@@ -66,8 +59,7 @@ class StoryController extends AbstractController
     #[Route('/submit', name: 'story_create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
-        $user = $this->getUser();
-        if (!$user->canSubmitStories()) {
+        if (!$this->getUser()->canSubmitStories()) {
             $this->addFlash('danger', 'You are not allowed to submit new stories.');
 
             return $this->redirectToRoute('index');
@@ -205,7 +197,7 @@ class StoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $q = $request->get('q');
-            $stories = $q !== '' ? $this->storyRepository->findBySearch($q) : [];
+            $stories = $q !== '' ? $this->storyRepository->findBySearch($q, $this->getUser()) : [];
 
             return $this->list($request, $stories, ['q' => $q]);
         }
@@ -232,7 +224,7 @@ class StoryController extends AbstractController
     #[Route('/domain/{name}', name: 'story_get_by_domain', methods: ['GET'])]
     public function getByDomain(Request $request, string $name): Response
     {
-        $stories = $this->storyRepository->findByDomain($name);
+        $stories = $this->storyRepository->findByDomain($name, $this->getUser());
         $users = array_map(fn($story) => $story->getUser(), $stories);
         $uniqueSubmittersCount = count(array_unique($users));
 
@@ -243,9 +235,9 @@ class StoryController extends AbstractController
      * @throws ExceptionInterface
      */
     #[Route('/stories/{username}', name: 'story_get_by_user', methods: ['GET'])]
-    public function getByUser(Request $request, User $user): Response
+    public function getByUser(Request $request, UserInterface $user): Response
     {
-        $stories = $this->storyRepository->findByUser($user);
+        $stories = $this->storyRepository->findByUser($user, $this->getUser());
 
         return $this->list($request, $stories, ['username' => $user->getUserIdentifier()]);
     }
