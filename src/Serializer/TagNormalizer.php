@@ -4,7 +4,7 @@ namespace App\Serializer;
 
 use App\Entity\Tag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class TagNormalizer extends AbstractNormalizer
 {

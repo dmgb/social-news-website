@@ -5,13 +5,13 @@ namespace App\Serializer;
 use App\Entity\Story;
 use App\Helper\DateTimeFormatter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class StoryNormalizer extends AbstractNormalizer
 {
     public function __construct(
-        protected UrlGeneratorInterface $router,
-        protected Security $security,
+        private readonly UrlGeneratorInterface $router,
+        private readonly Security $security,
     )
     {
         parent::__construct($router, $security);
@@ -19,36 +19,35 @@ class StoryNormalizer extends AbstractNormalizer
 
     public function normalize($object, string $format = null, array $context = []): array
     {
-        /** @var Story $story */
-        $story = $object;
+        if (!$object instanceof Story) {
+            throw new \TypeError('Argument $object must be of type ' . Story::class);
+        }
 
         return [
-            'id' => $story->getId(),
-            'title' => $story->getTitle(),
-            'url' => $story->getUrl(),
-            'domain' => $this->normalizeDomain($story->getUrl()),
-            'user' => $this->normalizeUser($story->getUser()),
-            'createdAt' => DateTimeFormatter::timeAgo($story->getCreatedAt()),
-            'score' => $story->getScore(),
-            'tags' => $this->normalizeTags($story->getTags()->toArray()),
-            'commentsCount' => count($story->getComments()),
-            'hasVoteOfCurrentUser' => $story->hasVoteOfUser($this->security->getUser()),
-            'urls' => $this->getUrls($story),
+            'id' => $object->getId(),
+            'title' => $object->getTitle(),
+            'url' => $object->getUrl(),
+            'domain' => $this->normalizeDomain($object->getUrl()),
+            'user' => $this->normalizeUser($object->getUser()),
+            'createdAt' => DateTimeFormatter::timeAgo($object->getCreatedAt()),
+            'score' => $object->getScore(),
+            'tags' => $this->normalizeTags($object->getTags()->toArray()),
+            'commentsCount' => count($object->getComments()),
+            'hasVoteOfCurrentUser' => $object->hasVoteOfUser($this->security->getUser()),
+            'urls' => $this->getUrls($object),
         ];
     }
 
     private function getUrls(Story $story): array
     {
-        $parameters = ['shortId' => $story->getShortId(), 'slug' => $story->getSlug()];
-        $canApprove = $this->security->isGranted('ROLE_ADMIN') && !$story->isDeleted();
-        $canDissaprove = $this->security->isGranted('ROLE_ADMIN') && !$story->getDissapprovedReason() && !$story->isDeleted();
-        $show = $this->router->generate('story_show', $parameters);
+        $params = ['shortId' => $story->getShortId(), 'slug' => $story->getSlug()];
+        $show = $this->router->generate('story_show', $params);
+        $edit = $this->security->isGranted('edit', $story) ? $this->router->generate('story_update', $params) : null;
+        $delete = $this->security->isGranted('delete', $story) ? $this->getDeleteUrl($story, $params) : null;
         $comment = $this->router->generate('comment_create', ['story' => $story->getId()]);
         $vote = $this->router->generate('story_vote_create');
-        $edit = $this->security->isGranted('edit', $story) ? $this->router->generate('story_update', $parameters) : null;
-        $delete = $this->security->isGranted('delete', $story) ? $this->getDeleteUrl($story, $parameters) : null;
-        $approve = $canApprove ? $this->router->generate('story_approve', $parameters) : null;
-        $disapprove = $canDissaprove ? $this->router->generate('story_disapprove', $parameters) : null;
+        $approve = $this->security->isGranted('ROLE_ADMIN') && !$story->isDeleted() ? $this->router->generate('story_approve', $params) : null;
+        $disapprove = $this->security->isGranted('ROLE_ADMIN') && !$story->getDissapprovedReason() && !$story->isDeleted() ? $this->router->generate('story_disapprove', $params) : null;
 
         return array_filter([
             'show' => $show,

@@ -5,14 +5,14 @@ namespace App\Serializer;
 use App\Entity\Comment;
 use App\Helper\DateTimeFormatter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class CommentNormalizer extends AbstractNormalizer
 {
     public function __construct(
-        protected UrlGeneratorInterface $router,
-        protected Security $security,
+        private readonly UrlGeneratorInterface $router,
+        private readonly Security $security,
     )
     {
         parent::__construct($router, $security);

@@ -4,7 +4,7 @@ namespace App\Serializer;
 
 use App\Entity\Interface\Normalizable;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
@@ -15,8 +15,8 @@ abstract class AbstractNormalizer implements NormalizerInterface, SerializerInte
     use SerializerAwareTrait;
 
     public function __construct(
-        protected UrlGeneratorInterface $router,
-        protected Security $security,
+        private readonly UrlGeneratorInterface $router,
+        private readonly Security $security,
     ){}
 
     abstract public function normalize($object, string $format = null, array $context = []): array;
