@@ -54,11 +54,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         return User::class === $class || is_subclass_of($class, User::class);
     }
 
-    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newEncodedPassword): void
-    {
-    }
-
-    public function loadUserByUsername(string $username)
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
     }
 }

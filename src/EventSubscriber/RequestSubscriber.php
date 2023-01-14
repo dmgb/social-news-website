@@ -2,13 +2,13 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
-class RequestSubscriber implements EventSubscriberInterface
+readonly class RequestSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private Security $security,
@@ -26,9 +26,10 @@ class RequestSubscriber implements EventSubscriberInterface
     {
         if ($this->security->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             $session = $event->getRequest()->getSession();
+            /** @var User $user */
             $user = $this->security->getUser();
             if ($user->isBanned()) {
-                $this->tokenStorage->setToken();
+                $this->tokenStorage->setToken(null);
                 $session->invalidate();
             }
         }

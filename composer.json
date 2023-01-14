@@ -7,6 +7,7 @@
         "php": "^8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-random": "*",
         "babdev/pagerfanta-bundle": "^3.7",
         "composer/package-versions-deprecated": "1.11.99.5",
         "doctrine/annotations": "^1.14",
@@ -43,7 +44,8 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "symfony/maker-bundle": "^1.48",
         "symfony/stopwatch": "6.2.*",
-        "symfony/web-profiler-bundle": "6.2.*"
+        "symfony/web-profiler-bundle": "6.2.*",
+        "vimeo/psalm": "^5.4"
     },
     "config": {
         "optimize-autoloader": true,

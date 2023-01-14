@@ -25,7 +25,7 @@ class Tag implements JsonSerializable
 
     public function __construct(
         #[Column(type: "string", unique: true)]
-        private string $name,
+        private readonly string $name,
     )
     {
         $this->stories = new ArrayCollection();
@@ -37,11 +37,6 @@ class Tag implements JsonSerializable
         return $this->name;
     }
 
-    public function getStories(): Collection
-    {
-        return $this->stories->filter(fn(Story $story) => $story->isApproved() && !$story->isDeleted());
-    }
-
     public function jsonSerialize(): array
     {
         return [
@@ -50,7 +45,7 @@ class Tag implements JsonSerializable
         ];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }
