@@ -27,8 +27,9 @@ class StoryType extends AbstractType
                         ->orderBy('t.name', 'ASC');
                 },
                 'choice_label' => 'name',
-                'choice_value' => 'id',
+                'choice_value' => 'name',
                 'multiple' => true,
+                'required' => false,
             ]);
     }
 

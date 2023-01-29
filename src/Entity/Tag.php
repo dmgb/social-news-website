@@ -37,6 +37,11 @@ class Tag implements JsonSerializable
         return $this->name;
     }
 
+    public function getStories(): Collection
+    {
+        return $this->stories;
+    }
+
     public function jsonSerialize(): array
     {
         return [

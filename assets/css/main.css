@@ -1,3 +1,5 @@
+@import 'tom-select/dist/css/tom-select.bootstrap5.min.css';
+
 :root {
     --dark-color: #303030;
 }
@@ -75,7 +77,7 @@ footer {
     border: none;
 }
 
-.btn-light:hover, .btn-light:focus{
+.btn-light:hover, .btn-light:focus {
     background: #fff;
     border: none !important;
     box-shadow: none !important;
@@ -227,6 +229,21 @@ kbd {
 
 .badge {
     font-weight: lighter;
+}
+
+.option.active:hover .badge, .item.active.last-active .badge {
+    background: #d5d458 !important;
+    color: #000 !important;
+}
+
+.ts-wrapper, .item, .option.active, .option.active:hover, .remove:hover {
+    background: #fff !important;
+}
+
+.remove {
+    padding-left: 0 !important;
+    border: none !important;
+    color: #000 !important;
 }
 
 @media (min-width: 320px) and (max-width: 992px) {

@@ -11,10 +11,7 @@
                 {{ form_row(form.url) }}
             </div>
             <div class="form-group">
-                {{ form_row(form.tags) }}
-                <sub class="float-start" style="margin-top: -.5rem; margin-bottom: 2rem;">
-                    Hold <kbd>Cmd</kbd> or <kbd>Ctrl</kbd> to select multiple tags
-                </sub>
+                {{ form_row(form.tags, {'id': 'tom-select'}) }}
             </div>
             <button class="w-100 btn btn-lg btn-dark" type="submit">
                 Submit
