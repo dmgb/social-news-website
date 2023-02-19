@@ -1,11 +1,7 @@
 <template>
-  <a href="#" class="btn btn-sm btn-dark" role="button" data-bs-toggle="modal" data-bs-target="#modal">
-    <span v-if="action === 'ban'">
-      Ban user
-    </span>
-    <span v-else>
-      Unban user
-    </span>
+  <a href="#" data-bs-toggle="modal" data-bs-target="#modal">
+    <img v-if="action === 'ban'" src="/build/images/ban.png" alt="" style="height: 2rem; width: auto;" />
+    <img v-else src="/build/images/checked.png" alt="" style="height: 2rem; width: auto;" />
   </a>
   <ban-user-dialog :url="url" :action="action"></ban-user-dialog>
 </template>

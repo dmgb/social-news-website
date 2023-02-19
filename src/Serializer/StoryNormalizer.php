@@ -4,19 +4,9 @@ namespace App\Serializer;
 
 use App\Entity\Story;
 use App\Helper\DateTimeFormatter;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class StoryNormalizer extends AbstractNormalizer
 {
-    public function __construct(
-        private readonly UrlGeneratorInterface $router,
-        private readonly Security $security,
-    )
-    {
-        parent::__construct($router, $security);
-    }
-
     public function normalize($object, string $format = null, array $context = []): array
     {
         if (!$object instanceof Story) {

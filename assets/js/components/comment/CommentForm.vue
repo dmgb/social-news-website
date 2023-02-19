@@ -23,7 +23,7 @@ export default defineComponent({
   emits: ["add-comment"],
   props: {
     action: { type: String },
-    submitButtonText: { type: String, default: 'Add comment' },
+    submitButtonText: { type: String, default: 'add comment' },
   },
   setup(props, { emit }) {
     let body = ref('');

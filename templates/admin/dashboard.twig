@@ -1,5 +1,4 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'base.twig' %}
 {% block body %}
     {% set currentRoute = app.request.attributes.get('_route') %}
     <div class="ps-2 pt-2 pe-2">
@@ -7,10 +6,10 @@
             <div class="col-6 col-sm-6">
                 <nav class="nav nav-pills">
                     <a class="nav-link {{ currentRoute == 'story_pending' ? ' active' : '' }}" aria-current="page" href="{{ path('story_pending') }}">
-                        Pending stories ({{ extraData.pendingCount }})
+                        pending stories ({{ extraData.pendingCount }})
                     </a>
                     <a class="nav-link {{ currentRoute == 'story_deleted' ? ' active' : '' }}" href="{{ path('story_deleted') }}">
-                        Deleted stories ({{ extraData.deletedCount }})
+                        deleted stories ({{ extraData.deletedCount }})
                     </a>
                 </nav>
             </div>

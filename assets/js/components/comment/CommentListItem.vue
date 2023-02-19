@@ -36,10 +36,10 @@
              :href="'#reply-form-' + comment.id"
              data-bs-toggle="collapse"
              aria-expanded="false">
-            <i class="bi bi-reply-fill"></i> Reply
+            <i class="bi bi-reply-fill"></i> reply
           </a>
           <a v-else class="ms-2 text-decoration-none" :href="'/login'">
-            <i class="bi bi-reply-fill"></i> Reply
+            <i class="bi bi-reply-fill"></i> reply
           </a>
         </span>
         </small>
@@ -48,7 +48,7 @@
         </div>
       </div>
       <div class="collapse mt-3" :id="'reply-form-' + comment.id">
-        <comment-form :action="comment.urls.reply" :submit-button-text="'Add reply'" @add-comment="addComment">
+        <comment-form :action="comment.urls.reply" :submit-button-text="'add reply'" @add-comment="addComment">
         </comment-form>
       </div>
       <div class="collapse show" :id="'children-list-' + comment.id">

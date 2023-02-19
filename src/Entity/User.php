@@ -52,7 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     #[Assert\Regex(
         pattern: '/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])/',
-        message: 'Password must include both lower and upper case characters, and at least one number.',
+        message: 'password must include both lower and upper case characters, and at least one number.',
     )]
     private string $plainPassword;
 
@@ -96,6 +96,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(mappedBy: 'user', targetEntity: TagFilter::class)]
     private Collection $tagFilters;
 
+    #[OneToMany(mappedBy: 'sender', targetEntity: Message::class)]
+    private Collection $sendMessages;
+
+    #[OneToMany(mappedBy: 'receiver', targetEntity: Message::class)]
+    private Collection $receivedMessages;
+
     public function __construct()
     {
         $this->createdAt = new DateTime();
@@ -104,6 +110,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->storyVotes = new ArrayCollection();
         $this->commentVotes = new ArrayCollection();
         $this->tagFilters = new ArrayCollection();
+        $this->sendMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
     }
 
     public function getUserIdentifier(): string
@@ -258,6 +266,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getTagFilters(): Collection
     {
         return $this->tagFilters;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getSendMessages(): Collection
+    {
+        return $this->sendMessages;
+    }
+
+    public function addSendMessage(Message $message): self
+    {
+        if (!$this->sendMessages->contains($message)) {
+            $this->sendMessages->add($message);
+            $message->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSendMessage(Message $message): self
+    {
+        if ($this->sendMessages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function addReceivedMessage(Message $message): self
+    {
+        if (!$this->receivedMessages->contains($message)) {
+            $this->receivedMessages->add($message);
+            $message->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedMessage(Message $message): self
+    {
+        if ($this->receivedMessages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
+            }
+        }
+
+        return $this;
     }
 
     public function canSubmitStories(): bool

@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ path('index') }}">
-            <img src="{{ asset('build/images/home.png') }}" alt="" style="height: 2rem; width: auto;" />
+            <img src="{{ asset('build/images/observation.png') }}" alt="" style="height: 2rem; width: auto;" />
         </a>
         <div style="margin-bottom: 2.25rem;">
             <div class="navbar-center">
@@ -30,6 +30,16 @@
                     <a class="nav-link" href="#">about</a>
                 </li>
             </ul>
+            {% if app.user %}
+                <div class="me-3 fs-2">
+                    <a href="{{ path('messages', { 'folder': 'inbox' }) }}">
+                        <img src="{{ asset('build/images/email.png') }}" alt="" style="height: 2rem; width: auto;" />
+                        <span class="position-absolute translate-middle rounded-circle"
+                              style="margin-top: 2.375rem; padding: .4rem; background: #95d0a9;">
+                        </span>
+                    </a>
+                </div>
+            {% endif %}
             <div class="text-end">
                 {% if app.user %}
                     <div class="dropdown">
@@ -40,7 +50,7 @@
                            data-bs-toggle="dropdown"
                            data-bs-display="static"
                            aria-expanded="false">
-                            <i class="bi bi-person-circle"></i>
+                            <img src="{{ asset('build/images/user.png') }}" alt="" style="height: 2rem; width: auto;" />
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end"
                             aria-labelledby="dropdownMenuLink">
@@ -56,9 +66,15 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
+                                <a class="dropdown-item" href="{{ path('user_show', { 'username': app.user.userIdentifier }) }}">
+                                    profile
+                                    <img src="{{ asset('build/images/user.png') }}" class="avatar-sm position-absolute end-0 mt-1 me-3" alt="" />
+                                </a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item" href="{{ path('change-password') }}">
-                                    Settings
-                                    <i class="bi bi-gear position-absolute end-0 me-3"></i>
+                                    settings
+                                    <i class="bi bi-gear-fill position-absolute end-0 me-3"></i>
                                 </a>
                             </li>
                             <li>
@@ -67,7 +83,7 @@
                             <li>
                                 <a class="btn btn-dark ms-3 me-3" href="{{ path('logout') }}" role="button"
                                    style="width: 10rem;">
-                                    Sign out
+                                    sign out
                                     <i class="bi bi-box-arrow-right ms-1"></i>
                                 </a>
                             </li>
@@ -75,7 +91,7 @@
                     </div>
                 {% else %}
                     <a class=" btn btn-outline-dark" href="{{ path('login') }}" role="button">
-                        Log in
+                        log in
                     </a>
                 {% endif %}
             </div>

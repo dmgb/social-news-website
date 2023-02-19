@@ -20,7 +20,7 @@ class ResetPasswordType extends AbstractType
                 'first_options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
-                        'placeholder' => 'Enter a password',
+                        'placeholder' => 'enter a password',
                     ],
                     'constraints' => [
                         new NotBlank([
@@ -32,16 +32,16 @@ class ResetPasswordType extends AbstractType
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'New password',
+                    'label' => 'new password',
                 ],
                 'second_options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
-                        'placeholder' => 'Enter password again',
+                        'placeholder' => 'enter password again',
                     ],
-                    'label' => 'Confirm password',
+                    'label' => 'confirm password',
                 ],
-                'invalid_message' => 'Passwords do not match.',
+                'invalid_message' => 'passwords do not match.',
                 'mapped' => false,
             ])
         ;

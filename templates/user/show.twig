@@ -1,48 +1,50 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'base.twig' %}
 {% block body %}
     <div class="ps-2 pt-2 pe-2">
         <div class="row">
             <div class="col-lg-2 col-sm-6 col-6 d-flex">
                 <div class="d-inline-block me-2">
-                    <img class="avatar pe-0 mb-2" src="{{ asset('build' ~ user.avatarPath) }}"  alt="" />
+                    <img class="avatar pe-0 mb-2" src="{{ asset('build' ~ user.avatarPath) }}" alt="" />
                 </div>
                 <div class="d-inline-block">
                     <h2>{{ user.userIdentifier }}</h2>
                 </div>
             </div>
-            {% if is_granted('ban', user) and not user.isAdmin %}
-                {% set action = user.banned ? 'unban' : 'ban' %}
-                <div class="col-lg-10 col-sm-6 col-6">
-                    <div class="float-end">
-                        <ban-user-button
-                                url="{{ action == 'ban' ? actions.user.ban : actions.user.unban }}"
-                                action="{{ action }}">
+            <div class="col-lg-10 col-sm-6 col-6">
+                <div class="float-end me-1">
+                    {% if app.user() != user %}
+                        <a href="{{ path('message_new', { 'username': user.userIdentifier }) }}" class="me-3">
+                            <img src="{{ asset('build/images/send.png') }}" alt="" style="height: 2rem; width: auto;" />
+                        </a>
+                    {% endif %}
+                    {% if is_granted('ban', user) and not user.isAdmin %}
+                        {% set action = user.banned ? 'unban' : 'ban' %}
+                        <ban-user-button url="{{ action == 'ban' ? actions.user.ban : actions.user.unban }}" action="{{ action }}">
                         </ban-user-button>
-                    </div>
+                    {% endif %}
                 </div>
-            {% endif %}
+            </div>
         </div>
         <div class="row">
-            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">Status:</div>
+            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">status:</div>
             <div class="col-lg-10 col-sm-6 col-6">
                 {% if user.banned %}
-                    Banned user
+                    banned user
                 {% else %}
-                    Active user {{ user.canSubmitStories ? '' : 'with story submissions disabled' }}
+                    active user {{ user.canSubmitStories ? '' : 'with story submissions disabled' }}
                 {% endif %}
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">Karma:</div>
+            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">karma:</div>
             <div class="col-lg-10 col-sm-6 col-6">
                 {{ user.karma }}, averaging {{ user.averageKarma }} per story/comment
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">Stories submitted:</div>
+            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">stories submitted:</div>
             <div class="col-lg-10 col-sm-6 col-6">
-                {% if user.approvedStoriesCount|length > 0 %}
+                {% if user.approvedStoriesCount > 0 %}
                     <a href="{{ path('story_get_by_user', { 'username': user.userIdentifier }) }}">
                         {{ user.approvedStoriesCount -}}
                     </a>
@@ -55,12 +57,12 @@
                         </a>
                     {% endif %}
                 {% else %}
-                    {{ user.stories|length }}
+                   0
                 {% endif %}
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">Comments posted:</div>
+            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">comments posted:</div>
             <div class="col-lg-10 col-sm-6 col-6">
                 {% if user.comments|length > 0 %}
                     <a href="{{ path('comment_get_by_user', { 'username': user.userIdentifier }) }}">
@@ -72,7 +74,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">Joined:</div>
+            <div class="col-lg-2 col-sm-6 col-6 fw-bolder">joined:</div>
             <div class="col-lg-10 col-sm-6 col-6">{{ user.createdAt|time_ago }}</div>
         </div>
     </div>

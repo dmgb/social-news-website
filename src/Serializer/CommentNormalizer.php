@@ -10,14 +10,6 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class CommentNormalizer extends AbstractNormalizer
 {
-    public function __construct(
-        private readonly UrlGeneratorInterface $router,
-        private readonly Security $security,
-    )
-    {
-        parent::__construct($router, $security);
-    }
-
     public function normalize($object, string $format = null, array $context = []): array
     {
         /** @var Comment $comment */

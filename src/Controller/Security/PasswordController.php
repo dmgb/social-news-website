@@ -24,9 +24,9 @@ class PasswordController extends AbstractController
     use ResetPasswordControllerTrait;
 
     public function __construct(
-        private ResetPasswordHelperInterface $resetPasswordHelper,
-        private UserMailer $mailer,
-        private UserRepository $userRepository,
+        private readonly ResetPasswordHelperInterface $resetPasswordHelper,
+        private readonly UserMailer                   $mailer,
+        private readonly UserRepository               $userRepository,
     ){}
 
     /**
@@ -41,7 +41,7 @@ class PasswordController extends AbstractController
             return $this->processSendingPasswordResetEmail($form->get('email')->getData());
         }
 
-        return $this->render('security/password/reset/request.html.twig', [
+        return $this->render('security/password/reset/request.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -93,7 +93,7 @@ class PasswordController extends AbstractController
             return $this->redirectToRoute('login');
         }
 
-        return $this->render('security/password/reset/reset.html.twig', [
+        return $this->render('security/password/reset/reset.twig', [
             'form' => $form->createView(),
         ]);
     }

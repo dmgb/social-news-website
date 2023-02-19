@@ -17,28 +17,28 @@ class RegistrationType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, [
-                'label' => 'Username',
+                'label' => 'username',
                 'attr' => [
                     'placeholder' => 'Enter your username',
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Email',
+                'label' => 'email',
                 'disabled' => true,
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'invalid_message' => 'Passwords do not match.',
+                'invalid_message' => 'passwords do not match.',
                 'first_options' => [
-                    'label' => 'Password',
+                    'label' => 'password',
                     'attr' => [
-                        'placeholder' => 'Enter a password',
+                        'placeholder' => 'enter a password',
                     ]
                 ],
                 'second_options' => [
-                    'label' => 'Confirm password',
+                    'label' => 'confirm password',
                     'attr' => [
-                        'placeholder' => 'Enter password again',
+                        'placeholder' => 'enter password again',
                     ]
                 ],
             ]);

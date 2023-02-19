@@ -1,0 +1,7 @@
+{% extends 'base.twig' %}
+{% block body %}
+    <message-view :data="{{ data|json_encode }}"></message-view>
+    {% if pager.haveToPaginate %}
+        {% include 'include/pager.html.twig' %}
+    {% endif %}
+{% endblock %}

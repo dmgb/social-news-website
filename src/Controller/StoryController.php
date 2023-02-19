@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\Trait\ControllerTrait;
 use App\Entity\Story;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Entity\Vote\StoryVote;
 use App\Form\SearchFieldType;
 use App\Form\StoryType;
@@ -24,7 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -32,13 +32,13 @@ class StoryController extends AbstractController
 {
     use ControllerTrait;
 
-    public const MAX_PER_PAGE = 15;
+    private const MAX_PER_PAGE = 15;
 
     public function __construct(
-        private CommentNormalizer $commentNormalizer,
-        private ShortIdGenerator  $shortIdGenerator,
-        private StoryNormalizer   $storyNormalizer,
-        private StoryRepository   $storyRepository,
+        private readonly CommentNormalizer $commentNormalizer,
+        private readonly ShortIdGenerator  $shortIdGenerator,
+        private readonly StoryNormalizer   $storyNormalizer,
+        private readonly StoryRepository   $storyRepository,
     ){}
 
     /**
@@ -60,20 +60,18 @@ class StoryController extends AbstractController
     public function create(Request $request): Response
     {
         if (!$this->getUser()->canSubmitStories()) {
-            $this->addFlash('danger', 'You are not allowed to submit new stories.');
+            $this->addFlash('danger', 'you are not allowed to submit new stories.');
 
             return $this->redirectToRoute('index');
         }
 
         $story = new Story($this->getUser());
-        $form = $this->createForm(StoryType::class, $story);
-        $form->handleRequest($request);
-
+        $form = $this->createForm(StoryType::class, $story)->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $shortId = $this->shortIdGenerator->generate(Story::class);
             $story->setShortId($shortId);
             $this->storyRepository->save($story);
-            $this->addFlash('success', 'Story is successfully submitted.');
+            $this->addFlash('success', 'story is successfully submitted.');
 
             return $this->redirectToRoute('index');
         }
@@ -86,7 +84,7 @@ class StoryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/s/{shortId}/{slug}', name: 'story_show', methods: ['GET'])]
+    #[Route('/s/{shortId}/{slug}', name: 'story_show', methods: 'GET')]
     public function show(Story $story): Response
     {
         if (!$story->isApproved() || $story->isDeleted()) {
@@ -105,13 +103,11 @@ class StoryController extends AbstractController
     #[Route('/s/{shortId}/{slug}/edit', name: 'story_update', methods: ['GET', 'POST'])]
     public function edit(Request $request, Story $story): Response
     {
-        $form = $this->createForm(StoryType::class, $story);
-        $form->handleRequest($request);
-
+        $form = $this->createForm(StoryType::class, $story)->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $story->setUpdatedAt(new DateTime());
             $this->storyRepository->save($story);
-            $this->addFlash('success', 'Story is successfully updated.');
+            $this->addFlash('success', 'story is successfully updated.');
 
             return $this->redirectToRoute('index');
         }
@@ -157,7 +153,7 @@ class StoryController extends AbstractController
         $story->setIsApproved(true);
         $story->setDissapprovedReason(null);
         $this->storyRepository->save($story);
-        $this->addFlash('success', 'Story is approved.');
+        $this->addFlash('success', 'story is approved.');
 
         return new JsonResponse(['success' => true]);
     }
@@ -171,13 +167,12 @@ class StoryController extends AbstractController
         $content = json_decode($request->getContent(), true);
         $story->setDissapprovedReason($content['disapprovedReason']);
         $violations = $validator->validate($story, null, ['approval']);
-
         if (count($violations) > 0) {
             return new JsonResponse(['errors' => $this->getFormErrors($violations)]);
         }
 
         $this->storyRepository->save($story);
-        $this->addFlash('success', 'Story is disapproved.');
+        $this->addFlash('success', 'story is disapproved.');
 
         return new JsonResponse(['success' => true]);
     }
@@ -191,10 +186,7 @@ class StoryController extends AbstractController
         $form = $this->createForm(SearchFieldType::class, null, [
             'action' => $this->generateUrl('story_search'),
             'method' => 'GET',
-        ]);
-
-        $form->handleRequest($request);
-
+        ])->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $q = $request->get('q');
             $stories = $q !== '' ? $this->storyRepository->findBySearch($q, $this->getUser()) : [];
@@ -235,7 +227,7 @@ class StoryController extends AbstractController
      * @throws ExceptionInterface
      */
     #[Route('/stories/{username}', name: 'story_get_by_user', methods: ['GET'])]
-    public function getByUser(Request $request, UserInterface $user): Response
+    public function getByUser(Request $request, User $user): Response
     {
         $stories = $this->storyRepository->findByUser($user, $this->getUser());
 
@@ -277,7 +269,7 @@ class StoryController extends AbstractController
     {
         $currentPage = $request->query->getInt('page', 1);
         $paginator = $this->createPaginator($stories, $currentPage, self::MAX_PER_PAGE);
-        $template = $isAdminView ? 'admin/dashboard.html.twig' : 'story/index.html.twig';
+        $template = $isAdminView ? 'admin/dashboard.twig' : 'story/index.html.twig';
         $fn = fn($story) => $this->storyNormalizer->normalize($story);
 
         return $this->render($template, [

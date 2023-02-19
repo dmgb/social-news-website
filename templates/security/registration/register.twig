@@ -1,5 +1,4 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'base.twig' %}
 {% block body %}
     <div class="inner-container text-center">
         <div class="form-wrapper">
@@ -20,13 +19,13 @@
                 {{ form_row(form.plainPassword.second) }}
             </div>
             <button class="w-100 btn btn-lg btn-dark mb-3" type="submit">
-                Create an account
+                create an account
             </button>
             {{ form_end(form) }}
             <p>
-                Already have an account?
+                already have an account?
                 <a href="{{ path('login') }}" style="color: #303030;">
-                    <b>Log in</b>
+                    <b>log in</b>
                 </a>
             </p>
         </div>

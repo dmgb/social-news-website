@@ -8,14 +8,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class TagNormalizer extends AbstractNormalizer
 {
-    public function __construct(
-        protected UrlGeneratorInterface $router,
-        protected Security $security,
-    )
-    {
-        parent::__construct($router, $security);
-    }
-
     public function normalize($object, string $format = null, array $context = []): array
     {
         /** @var Tag $tag */

@@ -265,13 +265,15 @@ kbd {
 }
 
 .avatar {
-    height: 3rem;
+    height: 2rem;
     width: auto;
+    border-radius: 50%;
 }
 
 .avatar-md {
     height: 1.5rem;
     width: auto;
+    border-radius: 50%;
 }
 
 .avatar-sm {

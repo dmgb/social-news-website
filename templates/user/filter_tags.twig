@@ -1,15 +1,14 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'base.twig' %}
 {% block body %}
     <div class="inner-container text-center">
         <div class="form-wrapper">
             {{ form_start(form) }}
             <table class="table table-bordered text-start border-dark">
                 <tbody>
-                    <tr class="font-monospace text-lowercase">
-                        <th class="me-0 pe-0">Hide</th>
-                        <th>Tag</th>
-                        <th class="float-end">Stories</th>
+                    <tr>
+                        <th class="me-0 pe-0">hide</th>
+                        <th>tag</th>
+                        <th class="float-end">stories</th>
                     </tr>
                     {% for item in form.tags %}
                         {% set index = item.vars.value %}
@@ -34,7 +33,7 @@
             </table>
             {% do form.tags.setRendered() %}
             <button class="w-100 btn btn-lg btn-dark" type="submit">
-                Save filters
+                save filters
             </button>
             {{ form_end(form) }}
         </div>

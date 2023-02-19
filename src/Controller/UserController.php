@@ -31,9 +31,9 @@ class UserController extends AbstractController
     use ControllerTrait;
 
     public function __construct(
-        private UserMailer $mailer,
-        private UserRepository $repository,
-        private ValidatorInterface $validator,
+        private readonly UserMailer         $mailer,
+        private readonly UserRepository     $repository,
+        private readonly ValidatorInterface $validator,
     ){}
 
     /**
@@ -47,7 +47,7 @@ class UserController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        return $this->render('user/show.html.twig', [
+        return $this->render('user/show.twig', [
             'user' => $user,
             'mostCommonStoryTag' => $this->repository->findMostCommonStoryTag($user),
             'actions' => $appUser?->isAdmin() ? $this->getAdminActions($user) : null,
@@ -81,7 +81,7 @@ class UserController extends AbstractController
         $invitationRepository->save($invitation);
         $url = $this->generateUrl('register', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->mailer->sendUserInvitationLink($email, $url);
-        $this->addFlash('success', 'Invitation has been successfully sent.');
+        $this->addFlash('success', 'invitation has been successfully sent.');
 
         return new JsonResponse(['success' => true]);
     }
@@ -103,7 +103,7 @@ class UserController extends AbstractController
 
         $user->setForceReloginAt(new DateTime());
         $this->repository->save($user);
-        $this->addFlash('success', 'User is banned.');
+        $this->addFlash('success', 'user is banned.');
 
         return new JsonResponse(['success' => true]);
     }
@@ -117,7 +117,7 @@ class UserController extends AbstractController
         $user->setIsBanned(false);
         $user->setBannedReason(null);
         $this->repository->save($user);
-        $this->addFlash('success', 'User is unbanned.');
+        $this->addFlash('success', 'user is unbanned.');
 
         return new JsonResponse(['success' => true]);
     }
@@ -136,7 +136,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('index');
         }
 
-        return $this->render('user/filter_tags.html.twig', [
+        return $this->render('filter_tags.twig', [
             'form' => $form->createView(),
         ]);
     }
