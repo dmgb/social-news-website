@@ -136,7 +136,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('index');
         }
 
-        return $this->render('filter_tags.twig', [
+        return $this->render('user/filter_tags.twig', [
             'form' => $form->createView(),
         ]);
     }
